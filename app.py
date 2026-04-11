@@ -751,5 +751,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-h1:hover::after, h2:hover::after, h3:hover::after { display: none !important; }
-a.header-link { display: none !important; }
+
