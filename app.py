@@ -5,19 +5,16 @@ import random
 import time
 import os
 
-# ──────────────────────────────────────────────
 # PAGE CONFIG
-# ──────────────────────────────────────────────
+
 st.set_page_config(
     page_title="🎯 Online Quiz App",
     page_icon="🎯",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
-
-# ──────────────────────────────────────────────
 # CUSTOM CSS
-# ──────────────────────────────────────────────
+
 st.markdown("""
 <style>
     .main { background-color: #0f0f1a; }
@@ -150,9 +147,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ──────────────────────────────────────────────
 # DATABASE — SQLite (works on Streamlit Cloud)
-# ──────────────────────────────────────────────
+
 DB_PATH = "quiz_app.db"
 
 QUESTIONS_PER_QUIZ = 5
@@ -248,9 +244,8 @@ def init_db():
         conn.commit()
     conn.close()
 
-# ──────────────────────────────────────────────
 # AUTH HELPERS
-# ──────────────────────────────────────────────
+
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
 
@@ -278,9 +273,8 @@ def login_user(username, password):
         return {"id": row["id"], "username": row["username"]}, None
     return None, "Invalid username or password."
 
-# ──────────────────────────────────────────────
 # QUIZ HELPERS
-# ──────────────────────────────────────────────
+
 def get_categories():
     conn = get_conn()
     c = conn.cursor()
@@ -348,9 +342,9 @@ def grade_label(pct):
     if pct >= 40:  return "🥉 Keep Practicing!"
     return "📚 Needs More Study"
 
-# ──────────────────────────────────────────────
+
 # SESSION STATE INIT
-# ──────────────────────────────────────────────
+
 def ss_init():
     defaults = {
         "page":        "auth",   # auth | home | category | quiz | results | leaderboard | history
@@ -371,9 +365,9 @@ def ss_init():
         if k not in st.session_state:
             st.session_state[k] = v
 
-# ──────────────────────────────────────────────
+
 # HEADER
-# ──────────────────────────────────────────────
+
 def render_header(subtitle=""):
     st.markdown(f"""
     <div class="quiz-header">
@@ -382,9 +376,9 @@ def render_header(subtitle=""):
     </div>
     """, unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════
+
 # PAGE: AUTH
-# ══════════════════════════════════════════════
+
 def page_auth():
     render_header()
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -427,9 +421,9 @@ def page_auth():
                         time.sleep(0.8)
                         st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: HOME MENU
-# ══════════════════════════════════════════════
+
 def page_home():
     user = st.session_state.user
     render_header(f"Welcome back, {user['username']}! 👋")
@@ -471,9 +465,9 @@ def page_home():
                 del st.session_state[k]
             st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: CATEGORY SELECT
-# ══════════════════════════════════════════════
+
 def page_category():
     render_header("Choose a Category")
     categories = get_categories()
@@ -510,9 +504,9 @@ def page_category():
         st.session_state.page = "home"
         st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: QUIZ
-# ══════════════════════════════════════════════
+
 def page_quiz():
     questions = st.session_state.questions
     idx       = st.session_state.q_index
@@ -625,9 +619,9 @@ def page_quiz():
             st.session_state.start_time    = time.time()
             st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: RESULTS
-# ══════════════════════════════════════════════
+
 def page_results():
     user     = st.session_state.user
     category = st.session_state.category
@@ -668,9 +662,9 @@ def page_results():
             st.session_state.page = "home"
             st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: LEADERBOARD
-# ══════════════════════════════════════════════
+
 def page_leaderboard():
     render_header("🏆 Top 10 Leaderboard")
     rows = get_leaderboard()
@@ -696,9 +690,9 @@ def page_leaderboard():
         st.session_state.page = "home"
         st.rerun()
 
-# ══════════════════════════════════════════════
+
 # PAGE: MY HISTORY
-# ══════════════════════════════════════════════
+
 def page_history():
     user = st.session_state.user
     render_header(f"📊 {user['username']}'s Quiz History")
@@ -727,9 +721,9 @@ def page_history():
         st.session_state.page = "home"
         st.rerun()
 
-# ──────────────────────────────────────────────
+
 # ROUTER
-# ──────────────────────────────────────────────
+
 def main():
     init_db()
     ss_init()
@@ -751,4 +745,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
